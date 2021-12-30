@@ -49,6 +49,8 @@ app.post('/signup', async (req, res) => {
     res.send('Signed up!')
 })
 
+// TODO: sanitize user input whenever data is read from the form
+
 app.post('/login', async (req, res) => {
     const user_info = req.user_info
     if (!user_info) {

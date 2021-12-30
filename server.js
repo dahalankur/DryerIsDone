@@ -50,6 +50,7 @@ app.post('/signup', async (req, res) => {
 })
 
 // TODO: sanitize user input whenever data is read from the form
+// also validate the input even if 'required' flag is set (check that all of email, password, name, new password, etc is supplied here as well)
 
 app.post('/login', async (req, res) => {
     const user_info = req.user_info

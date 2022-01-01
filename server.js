@@ -35,6 +35,15 @@ app.get('/', (req, res) => {
     res.render('index')
 })
 
+app.get('/login', (req, res) => {
+    res.render('login')
+})
+
+app.get('/signup', (req, res) => {
+    res.render('signup')
+})
+
+// TODO: send status codes in case of errors
 app.post('/signup', async (req, res) => {
     // check if user has already signed up with that email
     const user_info = req.user_info

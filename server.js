@@ -31,6 +31,7 @@ async function hashPassword(pass) {
     return await bcrypt.hash(pass, SALTROUNDS)
 }
 
+// TODO: figure out a way to manage authorization for certain routes (like changepass should only be accessible when a user is logged in, etc.)
 app.get('/', (req, res) => {
     res.render('index')
 })
@@ -51,7 +52,6 @@ app.get('/reset', (req, res) => {
     res.render('reset')
 })
 
-// TODO: send status codes in case of errors
 app.post('/signup', async (req, res) => {
     // check if user has already signed up with that email
     const user_info = req.user_info
@@ -89,8 +89,6 @@ app.post('/login', async (req, res) => {
         res.send('Wrong password!')
     }
 })
-
-
 
 app.post('/reset', async (req, res) => {
     const user_info = req.user_info

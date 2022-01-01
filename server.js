@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const shortid = require('shortid')
 
-const saltRounds = 10
+const SALTROUNDS = 10
 const PORT = process.env.PORT || 8000
 const app = express()
 
@@ -28,7 +28,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(fetchUserData)
 
 async function hashPassword(pass) {
-    return await bcrypt.hash(pass, saltRounds)
+    return await bcrypt.hash(pass, SALTROUNDS)
 }
 
 app.get('/', (req, res) => {
@@ -43,6 +43,14 @@ app.get('/signup', (req, res) => {
     res.render('signup')
 })
 
+app.get('/changepass', (req, res) => {
+    res.render('changepassword')
+})
+
+app.get('/reset', (req, res) => {
+    res.render('reset')
+})
+
 // TODO: send status codes in case of errors
 app.post('/signup', async (req, res) => {
     // check if user has already signed up with that email
@@ -50,10 +58,14 @@ app.post('/signup', async (req, res) => {
     if (user_info) {
         return res.send('User already exists! Reset your password or log in!')
     }
+    const user_name = req.body.name
+    const user_email = req.body.email
+    const user_password = req.body.password
+    if (!user_email || !user_name || !user_password) return res.status(400).send('Insufficient information supplied')
     await userModel.create(
-        { name: req.body.name, 
-          email: req.body.email, 
-          password: await hashPassword(req.body.password) })
+        { name: user_name, 
+          email: user_email, 
+          password: await hashPassword(user_password) })
     // TODO: redirect user to their personal page (render user home page, passing user object)
     res.send('Signed up!')
 })
@@ -67,7 +79,9 @@ app.post('/login', async (req, res) => {
         // res.render('signup') TODO!
         return res.send('No user found. Sign up!')
     }
-    const valid_pass = await bcrypt.compare(req.body.password, user_info.password)
+    const password = req.body.password
+    if (!password) return res.status(400).send('No password entered')
+    const valid_pass = await bcrypt.compare(password, user_info.password)
     if (valid_pass) {
         res.send('Correct password!')
         // res.render('login', { user: user_info }) TODO!
@@ -76,14 +90,13 @@ app.post('/login', async (req, res) => {
     }
 })
 
-app.get('/reset', (req, res) => {
-    res.render('reset')
-})
+
 
 app.post('/reset', async (req, res) => {
     const user_info = req.user_info
     if (user_info) {
         const user_email = user_info.email
+        if (!user_email) return res.status(400).send('No email entered')
         const random_pass = shortid.generate()
         user_info.password = await hashPassword(random_pass)
         await user_info.save()
@@ -99,7 +112,6 @@ app.post('/reset', async (req, res) => {
         // res.render('login', { user: user_info }) TODO!
     } else {
         res.send('Sign up! Your account does not exist')
-        // res.render('signup') TODO!!
     }
 })
 
@@ -107,9 +119,12 @@ app.post('/reset', async (req, res) => {
 app.post('/changepass', async (req, res) => {
     const user_info = req.user_info
     if (user_info) {
-        const pass_isvalid = await bcrypt.compare(req.body.password, user_info.password)
+        const old_pass = req.body.password
+        const new_pass = req.body.newpassword
+        if (!old_pass || !new_pass) return res.status(400).send('Password not entered')
+        const pass_isvalid = await bcrypt.compare(old_pass, user_info.password)
         if (pass_isvalid) {
-            user_info.password = await hashPassword(req.body.newpassword) // NOTE: important! This is newpassword that is being hashed now
+            user_info.password = await hashPassword(new_pass)
             await user_info.save()
             res.send('changed!')
         } else {
@@ -117,7 +132,6 @@ app.post('/changepass', async (req, res) => {
         }
     } else {
         res.send('Sign up! Your account does not exist')
-        // res.render('signup') TODO!!
     }
 })
 

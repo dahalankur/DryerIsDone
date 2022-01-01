@@ -10,8 +10,14 @@
 </head>
 <body>
     <%- include('./partials/nav', { home: '', login: 'active', signup: '' }) %> 
-    
-    <a href="/signup">Need an account? Sign up.</a>
-    <a href="/reset">Forgot Password</a>
+    <div class="container">
+        <form action="/login" method="POST" class="form my-4">
+            <label for="email" class="visually-hidden">Email: </label><input placeholder="Email" type="email" name="email" required><br />
+            <label for="password" class="visually-hidden">Password: </label><input placeholder="Password" type="password" name="password" required>
+            <button type="submit" class="btn btn-outline-success mx-2 btn-sm">Log In</button>
+        </form>
+        <a href="/signup">Need an account? Sign up.</a>
+        <a href="/reset">Forgot Password?</a>
+    </div>
 </body>
 </html>

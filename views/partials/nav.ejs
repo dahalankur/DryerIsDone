@@ -4,23 +4,33 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav mr-auto">
-        <a class="nav-item nav-link <%= home %>" href="/">Home</a>
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link <%= home %>" href="/">Home</a>
+        </li>
         
         <% if (!locals.logged_in) { %>
-          <a class="nav-item nav-link <%= login %>" href="/login">Log in</a> 
-          <a class="nav-item nav-link <%= signup %>" href="/signup">Sign up</a> 
+          <li class="nav-item">
+            <a class="nav-link <%= login %>" href="/login">Log in</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link <%= signup %>" href="/signup">Sign up</a>
+          </li>
         <% } else { %>
-          <a class="nav-item nav-link" href="/logout">Log out</a> 
-        <% } %>
-        <!-- what about sign up?? TODO: make only one of log in / sign up appear later, based on if the user is logged in or not -->
-        <!-- <a class="nav-item nav-link" href="#">Washers and Dryers</a> -->
-      </div>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">Log out</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-item dropdown nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Options
+              <!-- TODO: the dropdown does not work right now. Is it because of jquery, or something else? -->
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <a class="dropdown-item" href="/reset">Reset Password</a>
+              <a class="dropdown-item" href="/changepass">Change Password</a>
+            </div>
+          </li>
+          <% } %>
+      </ul>
     </div>
-    <style>
-      /* .username {
-        margin: 0;
-        padding-right: 5em;
-      } */
-    </style>
 </nav>

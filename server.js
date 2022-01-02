@@ -59,7 +59,7 @@ async function hashPassword(pass) {
 app.get('/', (req, res) => {
     if (req.session.user_info) {
         console.log(req.user_info)
-        res.send(`Welcome ${req.session.user_info.name}.`) // send them personalized page with logout link
+        res.send(`Welcome ${req.session.user_info.name}.`) // send them personalized page with logout link --> this page is the main page that contains washer and dryer details
     } else {
         res.render('index')
     }
@@ -120,8 +120,6 @@ app.post('/signup', async (req, res) => {
     // TODO: redirect user to their personal page (render user home page, passing user object)
     res.send('Signed up!')
 })
-
-// TODO: worried about parallel requests to the server. How does session handle that? investigate. There was something about using redis store (or sth), check that out.
 
 app.post('/login', async (req, res) => {
     const user_info = req.user_info

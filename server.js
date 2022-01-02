@@ -112,11 +112,10 @@ app.post('/signup', async (req, res) => {
     const user_email = req.body.email
     const user_password = req.body.password
     if (!user_email || !user_name || !user_password) return res.status(400).send('Insufficient information supplied')
-    await userModel.create(
-        { name: user_name, 
-          email: user_email, 
-          password: await hashPassword(user_password) })
+    info = { name: user_name, email: user_email, password: await hashPassword(user_password) }
+    await userModel.create(info)
     // TODO: redirect user to their personal page (render user home page, passing user object)
+    req.session.user_info = info // save user info in the session
     res.send('Signed up!')
 })
 

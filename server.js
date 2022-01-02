@@ -51,14 +51,13 @@ app.use(session({
 }))
 
 
-async function hashPassword(pass) {
-    return await bcrypt.hash(pass, SALTROUNDS)
+function hashPassword(pass) {
+    return bcrypt.hash(pass, SALTROUNDS)
 }
 
 // TODO: figure out a way to manage authorization for certain routes (like changepass should only be accessible when a user is logged in, etc.)
 app.get('/', (req, res) => {
     if (req.session.user_info) {
-        console.log(req.user_info)
         res.send(`Welcome ${req.session.user_info.name}.`) // send them personalized page with logout link --> this page is the main page that contains washer and dryer details
     } else {
         res.render('index')

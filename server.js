@@ -55,18 +55,19 @@ function hashPassword(pass) {
     return bcrypt.hash(pass, SALTROUNDS)
 }
 
-// TODO: figure out a way to manage authorization for certain routes (like changepass should only be accessible when a user is logged in, etc.)
+// TODO: figure out a way to manage authorization for certain routes (like changepass should only be accessible when a user is logged in, etc.) -- check when the basic logic is complete!
+
 app.get('/', (req, res) => {
     if (req.session.user_info) {
-        res.send(`Welcome ${req.session.user_info.name}.`) // send them personalized page with logout link --> this page is the main page that contains washer and dryer details
+        res.render('index', { user_info: req.session.user_info, logged_in: true })
     } else {
-        res.render('index')
+        res.render('index', { logged_in: false })
     }
 })
 
 app.get('/login', (req, res) => {
     if (req.session.user_info) {
-        res.redirect('/') // TODO: ask them to log out first
+        res.redirect('/')
     } else {
         res.render('login')
     }
@@ -82,14 +83,18 @@ app.get('/signup', (req, res) => {
 
 app.get('/changepass', (req, res) => {
     if (!req.session.user_info) {
-        res.redirect('/') // TODO: ask them to log in first!
+        res.redirect('/')
     } else {
-        res.render('changepassword')
+        res.render('changepassword', { user_info: req.session.user_info })
     }
 })
 
 app.get('/reset', (req, res) => {
-    res.render('reset')
+    if (req.session.user_info) {
+        res.render('reset', { logged_in: true })
+    } else {
+        res.render('reset', { logged_in : false })
+    }
 })
 
 app.get('/logout', (req, res) => {
@@ -97,11 +102,10 @@ app.get('/logout', (req, res) => {
         req.session.destroy(err => { if (err) console.error(err) })
         res.send('Logged out')
     } else {
-        res.redirect('/') // TODO: ask them to log in first!
+        res.redirect('/')
     }
 })
 
-// TODO: add session stuff here
 app.post('/signup', async (req, res) => {
     // check if user has already signed up with that email
     const user_info = req.user_info
@@ -127,22 +131,22 @@ app.post('/signup', async (req, res) => {
 app.post('/login', async (req, res) => {
     const user_info = req.user_info
     if (!user_info) {
-        // res.render('signup') TODO!
+        // res.render('signup') TODO! // TODO: add a 'flash' system for showing messages (like Flask)
         return res.send('No user found. Sign up!')
     }
     // check if user is already logged in
     if (req.session.user_info) {
-        res.redirect('/') // TODO: ask the user to log out first
+        res.redirect('/')
     } else {
         const password = req.body.password
         if (!password) return res.status(400).send('No password entered')
         const valid_pass = await bcrypt.compare(password, user_info.password)
         if (valid_pass) {
             req.session.user_info = user_info
-            res.send('Correct password!')
-            // res.render('login', { user: user_info }) TODO!
+            res.redirect('/')
         } else {
-            res.send('Wrong password!')
+            console.log(user_info.email)
+            res.render('login', { email: user_info.email }) // pre-fill the form with their email
         }
     }
 })
@@ -173,20 +177,24 @@ app.post('/reset', async (req, res) => {
 // /changepass needs an old password and new password fields
 app.post('/changepass', async (req, res) => {
     const user_info = req.user_info
-    if (user_info) {
-        const old_pass = req.body.password
-        const new_pass = req.body.newpassword
-        if (!old_pass || !new_pass) return res.status(400).send('Password not entered')
-        const pass_isvalid = await bcrypt.compare(old_pass, user_info.password)
-        if (pass_isvalid) {
-            user_info.password = await hashPassword(new_pass)
-            await user_info.save()
-            res.send('changed!')
-        } else {
-            res.send('Wrong password entered!')
-        }
+    if (!req.session.user_info) {
+        res.redirect('/') // TODO: user has to log in first!
     } else {
-        res.send('Sign up! Your account does not exist')
+        if (user_info) {
+            const old_pass = req.body.password
+            const new_pass = req.body.newpassword
+            if (!old_pass || !new_pass) return res.status(400).send('Password not entered')
+            const pass_isvalid = await bcrypt.compare(old_pass, user_info.password)
+            if (pass_isvalid) {
+                user_info.password = await hashPassword(new_pass)
+                await user_info.save()
+                res.send('changed!')
+            } else {
+                res.send('Wrong password entered!')
+            }
+        } else {
+            res.send('Sign up! Your account does not exist')
+        }
     }
 })
 

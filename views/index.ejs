@@ -5,9 +5,20 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>
 <body>
-    <%- include('./partials/nav', { home: 'active', login: '', signup: '' }) %> 
+    <%- include('./partials/nav', { home: 'active', login: '', signup: '', logged_in: logged_in }) %> 
     <div class="container">
-    
+        <% if (logged_in) { %>
+            <h1>Welcome, <%= user_info.name %>!</h1>
+            <!--  all code for when the user is logged in goes here. All user information can be found in 
+                  the user_info object -->
+            <!-- This particular section is the main section that should display all washer and dryer details + info specific to the logged in user -->
+            <!-- TODO: have to add a link to change password somewhere....(only when the user is logged in) -->
+        <% } else { %>
+            <h1>Welcome! </h1>
+            <p>You are not logged in. Please <a href="/login">log in</a> or <a href="/signup">sign up</a> to continue.</p>
+            <!--  all code for when the user is not logged in goes here. Ask the user to log in or sign up with the link to the respective form -->
+        <% } %>
+         
     </div>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

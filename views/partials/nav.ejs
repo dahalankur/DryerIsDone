@@ -4,12 +4,23 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
+      <div class="navbar-nav mr-auto">
         <a class="nav-item nav-link <%= home %>" href="/">Home</a>
-        <a class="nav-item nav-link <%= login %>" href="/login">Log in</a> 
-        <a class="nav-item nav-link <%= signup %>" href="/signup">Sign up</a> 
+        
+        <% if (!locals.logged_in) { %>
+          <a class="nav-item nav-link <%= login %>" href="/login">Log in</a> 
+          <a class="nav-item nav-link <%= signup %>" href="/signup">Sign up</a> 
+        <% } else { %>
+          <a class="nav-item nav-link" href="/logout">Log out</a> 
+        <% } %>
         <!-- what about sign up?? TODO: make only one of log in / sign up appear later, based on if the user is logged in or not -->
         <!-- <a class="nav-item nav-link" href="#">Washers and Dryers</a> -->
       </div>
     </div>
+    <style>
+      /* .username {
+        margin: 0;
+        padding-right: 5em;
+      } */
+    </style>
 </nav>

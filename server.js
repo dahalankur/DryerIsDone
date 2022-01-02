@@ -5,10 +5,19 @@ const userModel = require('./models/user')
 const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const shortid = require('shortid')
+const cookieParser = require('cookie-parser')
+const sessions = require('express-session')
 
+const TWELVE_HOURS = 12 * 60 * 60 * 1000 // milliseconds
 const SALTROUNDS = 10
 const PORT = process.env.PORT || 8000
 const app = express()
+const session_options = {
+    secret: process.env.SESSION_SECRET,
+    saveUninitialized: true,
+    cookie: { maxAge: TWELVE_HOURS },
+    resave: false 
+}
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Connected to database.'))
@@ -25,7 +34,10 @@ mongoose.connect(process.env.MONGO_URI)
 
 app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser());
+app.use(sessions(session_options))
 app.use(fetchUserData)
+
 
 async function hashPassword(pass) {
     return await bcrypt.hash(pass, SALTROUNDS)
@@ -33,7 +45,10 @@ async function hashPassword(pass) {
 
 // TODO: figure out a way to manage authorization for certain routes (like changepass should only be accessible when a user is logged in, etc.)
 app.get('/', (req, res) => {
-    res.render('index')
+    if (req.session.user_info) 
+        res.send(`Welcome ${req.session.user_info.name}.`) // send them personalized page with logout link
+    else 
+        res.render('index')
 })
 
 app.get('/login', (req, res) => {
@@ -53,10 +68,12 @@ app.get('/reset', (req, res) => {
 })
 
 app.get('/logout', (req, res) => {
+    req.session.destroy()
     res.send('Logged out')
     // TODO: clear the cookies and destroy session, then redirect to home page / login page
 })
 
+// TODO: add session stuff here
 app.post('/signup', async (req, res) => {
     // check if user has already signed up with that email
     const user_info = req.user_info
@@ -75,8 +92,7 @@ app.post('/signup', async (req, res) => {
     res.send('Signed up!')
 })
 
-// TODO: sanitize user input whenever data is read from the form
-// also validate the input even if 'required' flag is set (check that all of email, password, name, new password, etc is supplied here as well)
+// TODO: worried about parallel requests to the server. How does session handle that? investigate. There was something about using redis store (or sth), check that out.
 
 app.post('/login', async (req, res) => {
     const user_info = req.user_info
@@ -88,6 +104,7 @@ app.post('/login', async (req, res) => {
     if (!password) return res.status(400).send('No password entered')
     const valid_pass = await bcrypt.compare(password, user_info.password)
     if (valid_pass) {
+        req.session.user_info = user_info
         res.send('Correct password!')
         // res.render('login', { user: user_info }) TODO!
     } else {

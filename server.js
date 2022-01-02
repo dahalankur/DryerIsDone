@@ -5,19 +5,26 @@ const userModel = require('./models/user')
 const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const shortid = require('shortid')
-const cookieParser = require('cookie-parser')
-const sessions = require('express-session')
+const session = require('express-session')
+const MongoDBStore = require('connect-mongodb-session')(session);
 
 const TWELVE_HOURS = 12 * 60 * 60 * 1000 // milliseconds
 const SALTROUNDS = 10
 const PORT = process.env.PORT || 8000
 const app = express()
-const session_options = {
-    secret: process.env.SESSION_SECRET,
-    saveUninitialized: true,
-    cookie: { maxAge: TWELVE_HOURS },
-    resave: false 
-}
+
+// src: https://www.npmjs.com/package/connect-mongodb-session
+const store = new MongoDBStore(
+    {
+      uri: process.env.SESSION_URI,
+      databaseName: process.env.SESSION_DB,
+      collection: process.env.SESSION_COLLECTION
+    },
+    err => { if (err) console.error(err) });
+  
+store.on('error', err => {
+    if (err) console.error(err)
+});
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Connected to database.'))
@@ -34,9 +41,14 @@ mongoose.connect(process.env.MONGO_URI)
 
 app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: true }))
-app.use(cookieParser());
-app.use(sessions(session_options))
 app.use(fetchUserData)
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    store: store,
+    saveUninitialized: true,
+    cookie: { maxAge: TWELVE_HOURS },
+    resave: false
+}))
 
 
 async function hashPassword(pass) {
@@ -68,7 +80,7 @@ app.get('/reset', (req, res) => {
 })
 
 app.get('/logout', (req, res) => {
-    req.session.destroy()
+    req.session.destroy(err => { if (err) console.error(err) })
     res.send('Logged out')
     // TODO: clear the cookies and destroy session, then redirect to home page / login page
 })

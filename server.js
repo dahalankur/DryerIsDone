@@ -108,15 +108,20 @@ app.post('/signup', async (req, res) => {
     if (user_info) {
         return res.send('User already exists! Reset your password or log in!')
     }
-    const user_name = req.body.name
-    const user_email = req.body.email
-    const user_password = req.body.password
-    if (!user_email || !user_name || !user_password) return res.status(400).send('Insufficient information supplied')
-    info = { name: user_name, email: user_email, password: await hashPassword(user_password) }
-    await userModel.create(info)
-    // TODO: redirect user to their personal page (render user home page, passing user object)
-    req.session.user_info = info // save user info in the session
-    res.send('Signed up!')
+    // check if user is already logged in
+    if (req.session.user_info) {
+        res.redirect('/') // TODO: ask the user to log out first
+    } else {
+        const user_name = req.body.name
+        const user_email = req.body.email
+        const user_password = req.body.password
+        if (!user_email || !user_name || !user_password) return res.status(400).send('Insufficient information supplied')
+        info = { name: user_name, email: user_email, password: await hashPassword(user_password) }
+        await userModel.create(info)
+        // TODO: redirect user to their personal page (render user home page, passing user object)
+        req.session.user_info = info // save user info in the session
+        res.send('Signed up!')
+    }
 })
 
 app.post('/login', async (req, res) => {
@@ -125,15 +130,20 @@ app.post('/login', async (req, res) => {
         // res.render('signup') TODO!
         return res.send('No user found. Sign up!')
     }
-    const password = req.body.password
-    if (!password) return res.status(400).send('No password entered')
-    const valid_pass = await bcrypt.compare(password, user_info.password)
-    if (valid_pass) {
-        req.session.user_info = user_info
-        res.send('Correct password!')
-        // res.render('login', { user: user_info }) TODO!
+    // check if user is already logged in
+    if (req.session.user_info) {
+        res.redirect('/') // TODO: ask the user to log out first
     } else {
-        res.send('Wrong password!')
+        const password = req.body.password
+        if (!password) return res.status(400).send('No password entered')
+        const valid_pass = await bcrypt.compare(password, user_info.password)
+        if (valid_pass) {
+            req.session.user_info = user_info
+            res.send('Correct password!')
+            // res.render('login', { user: user_info }) TODO!
+        } else {
+            res.send('Wrong password!')
+        }
     }
 })
 

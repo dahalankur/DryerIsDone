@@ -7,9 +7,9 @@
     <%- include('./partials/nav', { home: '', login: '', signup: 'active' }) %> 
     <div class="container">
         <form action="/signup" method="POST" class="form my-4">
-            <label for="name" class="visually-hidden">Name: </label><input placeholder="Name" type="text" name="name" required><br />
-            <label for="email" class="visually-hidden">Email: </label><input placeholder="Email" type="email" name="email" required><br />
-            <label for="password" class="visually-hidden">Password: </label><input placeholder="Password" type="password" name="password" required>
+            <label for="name" class="sr-only">Name: </label><input placeholder="Name" type="text" name="name" required><br />
+            <label for="email" class="sr-only">Email: </label><input placeholder="Email" type="email" name="email" required><br />
+            <label for="password" class="sr-only">Password: </label><input placeholder="Password" type="password" name="password" required>
             <button type="submit" class="btn btn-outline-success mx-2 btn-sm">Sign Up</button>
         </form>
         <a href="/login">Already have an account? Log in.</a>

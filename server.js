@@ -52,6 +52,11 @@ app.get('/reset', (req, res) => {
     res.render('reset')
 })
 
+app.get('/logout', (req, res) => {
+    res.send('Logged out')
+    // TODO: clear the cookies and destroy session, then redirect to home page / login page
+})
+
 app.post('/signup', async (req, res) => {
     // check if user has already signed up with that email
     const user_info = req.user_info

@@ -8,7 +8,7 @@ const shortid = require('shortid')
 const session = require('express-session')
 const MongoDBStore = require('connect-mongodb-session')(session);
 
-const TWELVE_HOURS = 12 * 60 * 60 * 1000 // milliseconds
+const TWO_WEEKS = 14 * 24 * 60 * 60 * 1000 // milliseconds
 const SALTROUNDS = 10
 const PORT = process.env.PORT || 8000
 const app = express()
@@ -46,7 +46,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     store: store,
     saveUninitialized: true,
-    cookie: { maxAge: TWELVE_HOURS },
+    cookie: { maxAge: TWO_WEEKS },
     resave: false
 }))
 

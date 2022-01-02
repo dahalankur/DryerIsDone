@@ -57,22 +57,36 @@ async function hashPassword(pass) {
 
 // TODO: figure out a way to manage authorization for certain routes (like changepass should only be accessible when a user is logged in, etc.)
 app.get('/', (req, res) => {
-    if (req.session.user_name) 
-        res.send(`Welcome ${req.session.user_name}.`) // send them personalized page with logout link
-    else 
+    if (req.session.user_info) {
+        console.log(req.user_info)
+        res.send(`Welcome ${req.session.user_info.name}.`) // send them personalized page with logout link
+    } else {
         res.render('index')
+    }
 })
 
 app.get('/login', (req, res) => {
-    res.render('login')
+    if (req.session.user_info) {
+        res.redirect('/') // TODO: ask them to log out first
+    } else {
+        res.render('login')
+    }
 })
 
 app.get('/signup', (req, res) => {
-    res.render('signup')
+    if (req.session.user_info) {
+        res.redirect('/') // TODO: ask them to log out first
+    } else {
+        res.render('signup')
+    }
 })
 
 app.get('/changepass', (req, res) => {
-    res.render('changepassword')
+    if (!req.session.user_info) {
+        res.redirect('/') // TODO: ask them to log in first!
+    } else {
+        res.render('changepassword')
+    }
 })
 
 app.get('/reset', (req, res) => {
@@ -80,9 +94,12 @@ app.get('/reset', (req, res) => {
 })
 
 app.get('/logout', (req, res) => {
-    req.session.destroy(err => { if (err) console.error(err) })
-    res.send('Logged out')
-    // TODO: clear the cookies and destroy session, then redirect to home page / login page
+    if (req.session.user_info) {
+        req.session.destroy(err => { if (err) console.error(err) })
+        res.send('Logged out')
+    } else {
+        res.redirect('/') // TODO: ask them to log in first!
+    }
 })
 
 // TODO: add session stuff here
@@ -116,7 +133,7 @@ app.post('/login', async (req, res) => {
     if (!password) return res.status(400).send('No password entered')
     const valid_pass = await bcrypt.compare(password, user_info.password)
     if (valid_pass) {
-        req.session.user_name = user_info.name
+        req.session.user_info = user_info
         res.send('Correct password!')
         // res.render('login', { user: user_info }) TODO!
     } else {

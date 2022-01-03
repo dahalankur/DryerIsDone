@@ -8,13 +8,55 @@
     <div class="container">
         <% if (logged_in) { %>
             <h1>Welcome, <%= user_info.name %>!</h1>
+            <p>International house washer and dryer status: </p>
+            
+            <!-- <div class="card mx-4 my-4" style="width: 18rem;">
+                <img class="card-img-top" src="..." alt="Card image cap">  add washer/dryer photos
+                <div class="card-body">
+                  <h5 class="card-title">Washer #1</h5>
+                  <p class="card-text">Status: </p>
+                  <a href="#" class="btn btn-primary">Go somewhere</a> TODO: make this button set the washer/dryer as in/use, etc... This button should be disabled and show "in use" when washer/dryer is in use, etc.
+                </div>
+              </div>
+              <div class="card mx-4 my-4" style="width: 18rem;">
+                <img class="card-img-top" src="..." alt="Card image cap">  add washer/dryer photos
+                <div class="card-body">
+                  <h5 class="card-title">Dryer #1</h5>
+                  <p class="card-text">Status: </p>
+                  <a href="#" class="btn btn-primary">Go somewhere</a> TODO: make this button set the washer/dryer as in/use, etc...
+                </div>
+              </div> -->
+
+              <div class="row my-4">
+                <div class="col-sm-6">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">Washer #1</h5>
+                      <p class="card-text">Status: </p> 
+                      <a href="#" class="btn btn-primary">TODO: in use/use washer</a>
+                      <!-- <a href="#" class="btn btn-primary">Notify me when done</a> -->
+                      <!-- TODO: add a "poke user" option to send an email to the current user of the washer/dryer! -->
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">Dryer #1</h5>
+                      <p class="card-text">Status: </p>
+                      <a href="#" class="btn btn-primary">TODO: in use/use washer</a>
+                      <!-- <a href="#" class="btn btn-primary">Notify me when done</a> -> is this a big ask? -->
+                      <!-- TODO: add a "poke user" option to send an email to the current user of the washer/dryer! -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             <!--  all code for when the user is logged in goes here. All user information can be found in 
                   the user_info object -->
-            <!-- This particular section is the main section that should display all washer and dryer details + info specific to the logged in user -->
-            <!-- TODO: have to add a link to change password somewhere....(only when the user is logged in) -->
-            <!-- Plan: Add a custom settings page where they can reset or change their password -->
         <% } else { %>
             <h1>Welcome! </h1>
+            <p>This website displays current status of the washers and dryers present in the International House at Tufts University.</p>
             <p>You are not logged in. Please <a href="/login">log in</a> or <a href="/signup">sign up</a> to continue.</p>
             <!--  all code for when the user is not logged in goes here. Ask the user to log in or sign up with the link to the respective form -->
         <% } %>

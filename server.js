@@ -118,12 +118,18 @@ app.get('/useDryer', async (req, res) => {
 
 app.get('/', async (req, res) => {
     if (req.session.user_info) {
-        const status = await statusModel.find()
+        const status = await initializeStatusModel()
         res.render('index', { user_info: req.session.user_info, logged_in: true, washer_available: status[0].washer_available, dryer_available: status[0].dryer_available })
     } else {
         res.render('index', { logged_in: false })
     }
 })
+
+async function initializeStatusModel() {
+    const status = await statusModel.find()
+    if (status.length != 0) return status
+    return statusModel.create({ washer_available: false, dryer_available: false })
+}
 
 app.get('/login', (req, res) => {
     if (req.session.user_info) {

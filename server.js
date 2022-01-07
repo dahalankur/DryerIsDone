@@ -2,11 +2,12 @@ require('dotenv').config()
 const sendmail = require('./sendmail')
 const express = require('express')
 const userModel = require('./models/user')
+const statusModel = require('./models/status')
 const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const shortid = require('shortid')
 const session = require('express-session')
-const MongoDBStore = require('connect-mongodb-session')(session);
+const MongoDBStore = require('connect-mongodb-session')(session)
 
 const TWO_WEEKS = 14 * 24 * 60 * 60 * 1000 // milliseconds
 const SALTROUNDS = 10
@@ -20,11 +21,11 @@ const store = new MongoDBStore(
       databaseName: process.env.SESSION_DB,
       collection: process.env.SESSION_COLLECTION
     },
-    err => { if (err) console.error(err) });
+    err => { if (err) console.error(err) })
   
 store.on('error', err => {
     if (err) console.error(err)
-});
+})
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Connected to database.'))
@@ -55,11 +56,70 @@ function hashPassword(pass) {
     return bcrypt.hash(pass, SALTROUNDS)
 }
 
-// TODO: figure out a way to manage authorization for certain routes (like changepass should only be accessible when a user is logged in, etc.) -- check when the basic logic is complete!
 
-app.get('/', (req, res) => {
+// TODO: debug mode only //
+app.get('/debugWasher', async (req, res) => {
+    const status = await statusModel.find()
+    status[0].washer_available = !status[0].washer_available
+    await status[0].save()
+    res.redirect('/')
+})
+
+app.get('/debugDryer', async (req, res) => {
+    const status = await statusModel.find()
+    status[0].dryer_available = !status[0].dryer_available
+    await status[0].save()
+    res.redirect('/')
+})
+
+
+//                       //
+
+
+app.get('/useWasher', async (req, res) => {
     if (req.session.user_info) {
-        res.render('index', { user_info: req.session.user_info, logged_in: true, washer_available: false, dryer_available: true }) // TODO: washer and dryer status sent for testing purposes only
+        const curr_status = await statusModel.find()
+        if (curr_status.length != 0) {
+            // handle user-induced "race condition"
+            if (!curr_status[0].washer_available) {
+                console.error("not allowed!") // TODO: flash message that dryer is already in use by someone else
+                return res.redirect('/') 
+            }
+            curr_status[0].washer_available = false
+            await curr_status[0].save()
+        } else {
+            await statusModel.create({ washer_available: false })
+        }
+        res.redirect('/')
+    } else {
+        res.render('index', { logged_in: false })
+    }
+})
+
+app.get('/useDryer', async (req, res) => {
+    if (req.session.user_info) {
+        const curr_status = await statusModel.find()
+        if (curr_status.length != 0) {
+            // handle user-induced "race condition"
+            if (!curr_status[0].dryer_available) { 
+                console.error("not allowed!") // TODO: flash message that dryer is already in use by someone else
+                return res.redirect('/') 
+            } 
+            curr_status[0].dryer_available = false
+            await curr_status[0].save()
+        } else {
+            await statusModel.create({ dryer_available: false })
+        }
+        res.redirect('/')
+    } else {
+        res.render('index', { logged_in: false })
+    }
+})
+
+app.get('/', async (req, res) => {
+    if (req.session.user_info) {
+        const status = await statusModel.find()
+        res.render('index', { user_info: req.session.user_info, logged_in: true, washer_available: status[0].washer_available, dryer_available: status[0].dryer_available })
     } else {
         res.render('index', { logged_in: false })
     }

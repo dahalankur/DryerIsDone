@@ -39,7 +39,7 @@
                       <% } %>
                       </p>
                       <% if (locals.washer_available) { %>
-                        <a href="#" class="btn btn-primary">Use Washer</a>
+                        <a href="/useWasher" class="btn btn-primary">Use Washer</a>
                         <!-- Figure out how to communicate the changed state of the washer/dryer to the server. Maybe send a POST request that just switches the status when the button is pressed? If we do this, the link should be a button that posts to /useWasher (or /useDryer) -->
                       <% } else { %>
                         <a href="#" class="btn btn-primary disabled">Use Washer</a> <!-- This does not need to have any action bound to it because the dryer is already in use and nothing can be done about its state -->
@@ -60,7 +60,7 @@
                       <% } %> <!-- TODO: add info about the user who is using the dryer, and so on... -->
                       </p>
                       <% if (locals.dryer_available) { %>
-                        <a href="#" class="btn btn-primary">Use Dryer</a>
+                        <a href="/useDryer" class="btn btn-primary">Use Dryer</a>
                         <!-- Figure out how to communicate the changed state of the washer/dryer to the server. Maybe send a POST request that just switches the status when the button is pressed? -->
                       <% } else { %>
                         <a href="#" class="btn btn-primary disabled">Use Dryer</a> <!-- This does not need to have any action bound to it because the dryer is already in use and nothing can be done about its state -->
@@ -71,8 +71,18 @@
                   </div>
                 </div>
               </div>
+              
 
-            <!--  all code for when the user is logged in goes here. All user information can be found in 
+
+              <!-- TODO: debugging code, remove later -->
+              <label>TODO: For testing purpose only:</label><br />
+              <a href="/debugWasher">Switch Washer Status</a><br />
+              <a href="/debugDryer">Switch Dryer Status</a>
+              <!-- TODO: debugging code, remove later -->
+
+           
+           
+              <!--  all code for when the user is logged in goes here. All user information can be found in 
                   the user_info object -->
         <% } else { %>
             <h1>Welcome! </h1>

@@ -58,38 +58,34 @@ function hashPassword(pass) {
 
 
 // TODO: debug mode only //
+
 app.get('/debugWasher', async (req, res) => {
-    const status = await statusModel.find()
-    status[0].washer_available = !status[0].washer_available
-    await status[0].save()
+    const status = await getStatusModel()
+    status.washer_available = !status.washer_available
+    await status.save()
     res.redirect('/')
 })
 
 app.get('/debugDryer', async (req, res) => {
-    const status = await statusModel.find()
-    status[0].dryer_available = !status[0].dryer_available
-    await status[0].save()
+    const status = await getStatusModel()
+    status.dryer_available = !status.dryer_available
+    await status.save()
     res.redirect('/')
 })
-
 
 //                       //
 
 
 app.get('/useWasher', async (req, res) => {
     if (req.session.user_info) {
-        const curr_status = await statusModel.find()
-        if (curr_status.length != 0) {
-            // handle user-induced "race condition"
-            if (!curr_status[0].washer_available) {
-                console.error("not allowed!") // TODO: flash message that dryer is already in use by someone else
-                return res.redirect('/') 
-            }
-            curr_status[0].washer_available = false
-            await curr_status[0].save()
-        } else {
-            await statusModel.create({ washer_available: false })
+        const curr_status = await getStatusModel()
+        // handle user-induced "race condition"
+        if (!curr_status.washer_available) {
+            console.error("not allowed!") // TODO: flash message that dryer is already in use by someone else
+            return res.redirect('/') 
         }
+        curr_status.washer_available = false
+        await curr_status.save()
         res.redirect('/')
     } else {
         res.render('index', { logged_in: false })
@@ -98,18 +94,14 @@ app.get('/useWasher', async (req, res) => {
 
 app.get('/useDryer', async (req, res) => {
     if (req.session.user_info) {
-        const curr_status = await statusModel.find()
-        if (curr_status.length != 0) {
-            // handle user-induced "race condition"
-            if (!curr_status[0].dryer_available) { 
-                console.error("not allowed!") // TODO: flash message that dryer is already in use by someone else
-                return res.redirect('/') 
-            } 
-            curr_status[0].dryer_available = false
-            await curr_status[0].save()
-        } else {
-            await statusModel.create({ dryer_available: false })
-        }
+        const curr_status = await getStatusModel()
+        // handle user-induced "race condition"
+        if (!curr_status.dryer_available) { 
+            console.error("not allowed!") // TODO: flash message that dryer is already in use by someone else
+            return res.redirect('/') 
+        } 
+        curr_status.dryer_available = false
+        await curr_status.save()
         res.redirect('/')
     } else {
         res.render('index', { logged_in: false })
@@ -118,18 +110,16 @@ app.get('/useDryer', async (req, res) => {
 
 app.get('/', async (req, res) => {
     if (req.session.user_info) {
-        const status = await initializeStatusModel()
-        console.log(status)
+        const status = await getStatusModel()
         res.render('index', { user_info: req.session.user_info, logged_in: true, washer_available: status.washer_available, dryer_available: status.dryer_available })
     } else {
         res.render('index', { logged_in: false })
     }
 })
 
-async function initializeStatusModel() {
+async function getStatusModel() {
     const status = await statusModel.find()
-    if (status.length != 0) return status[0]
-    return statusModel.create({ washer_available: false, dryer_available: false })
+    return (status.length != 0)? status[0] : statusModel.create({}) // default is false/false
 }
 
 app.get('/login', (req, res) => {

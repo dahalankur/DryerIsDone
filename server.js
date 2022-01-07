@@ -1,10 +1,10 @@
 require('dotenv').config()
-const sendmail = require('./sendmail')
 const express = require('express')
+const mongoose = require('mongoose')
+const sendmail = require('./sendmail')
 const userModel = require('./models/user')
 const statusModel = require('./models/status')
 const bcrypt = require('bcrypt')
-const mongoose = require('mongoose')
 const shortid = require('shortid')
 const session = require('express-session')
 const MongoDBStore = require('connect-mongodb-session')(session)
@@ -14,7 +14,7 @@ const SALTROUNDS = 10
 const PORT = process.env.PORT || 8000
 const app = express()
 
-// src: https://www.npmjs.com/package/connect-mongodb-session
+// https://www.npmjs.com/package/connect-mongodb-session
 const store = new MongoDBStore(
     {
       uri: process.env.SESSION_URI,
@@ -50,11 +50,6 @@ app.use(session({
     cookie: { maxAge: TWO_WEEKS },
     resave: false
 }))
-
-
-function hashPassword(pass) {
-    return bcrypt.hash(pass, SALTROUNDS)
-}
 
 
 // TODO: debug mode only //
@@ -117,11 +112,6 @@ app.get('/', async (req, res) => {
     }
 })
 
-async function getStatusModel() {
-    const status = await statusModel.find()
-    return (status.length != 0)? status[0] : statusModel.create({}) // default is false/false
-}
-
 app.get('/login', (req, res) => {
     if (req.session.user_info) {
         res.redirect('/')
@@ -164,7 +154,6 @@ app.post('/signup', async (req, res) => {
     if (user_info) {
         return res.redirect('/login') // TODO: 'flash' message that user exists! Log in
     }
-
     if (!req.session.user_info) {
         const user_name = req.body.name
         const user_email = req.body.email
@@ -220,7 +209,6 @@ app.post('/reset', async (req, res) => {
     }
 })
 
-// /changepass needs an old password and new password fields
 app.post('/changepass', async (req, res) => {
     const user_info = req.user_info
     if (!req.session.user_info) {
@@ -249,6 +237,17 @@ async function fetchUserData(req, res, next) {
     const user_info = await userModel.findOne({ email: req.body.email })
     req.user_info = user_info? user_info : null
     next()
+}
+
+// getStatusModel retrieves the washer and dryer status from the database
+async function getStatusModel() {
+    const status = await statusModel.find()
+    return (status.length != 0)? status[0] : statusModel.create({}) // default is false/false
+}
+
+// hashPassword takes in a plaintext password `pass` and returns the hashed version of the password
+function hashPassword(pass) {
+    return bcrypt.hash(pass, SALTROUNDS)
 }
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))

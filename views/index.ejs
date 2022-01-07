@@ -32,8 +32,18 @@
                   <div class="card my-4 mx-2">
                     <div class="card-body">
                       <h5 class="card-title">Washer #1</h5>
-                      <p class="card-text">Status: </p> 
-                      <a href="#" class="btn btn-primary">TODO: in use/use washer</a>
+                      <p class="card-text">Status: <% if (locals.washer_available) { %>
+                        <span class="badge badge-success">Available</span>
+                      <% } else { %>
+                        <span class="badge badge-danger">In use</span>
+                      <% } %>
+                      </p>
+                      <% if (locals.washer_available) { %>
+                        <a href="#" class="btn btn-primary">Use Washer</a>
+                        <!-- Figure out how to communicate the changed state of the washer/dryer to the server. Maybe send a POST request that just switches the status when the button is pressed? If we do this, the link should be a button that posts to /useWasher (or /useDryer) -->
+                      <% } else { %>
+                        <a href="#" class="btn btn-primary disabled">Use Washer</a> <!-- This does not need to have any action bound to it because the dryer is already in use and nothing can be done about its state -->
+                      <% } %>
                       <!-- <a href="#" class="btn btn-primary">Notify me when done</a> -->
                       <!-- TODO: add a "poke user" option to send an email to the current user of the washer/dryer! -->
                     </div>
@@ -43,8 +53,18 @@
                   <div class="card my-4 mx-2">
                     <div class="card-body">
                       <h5 class="card-title">Dryer #1</h5>
-                      <p class="card-text">Status: </p>
-                      <a href="#" class="btn btn-primary">TODO: in use/use washer</a>
+                      <p class="card-text">Status: <% if (locals.dryer_available) { %>
+                        <span class="badge badge-success">Available</span>
+                      <% } else { %>
+                        <span class="badge badge-danger">In use</span>
+                      <% } %> <!-- TODO: add info about the user who is using the dryer, and so on... -->
+                      </p>
+                      <% if (locals.dryer_available) { %>
+                        <a href="#" class="btn btn-primary">Use Dryer</a>
+                        <!-- Figure out how to communicate the changed state of the washer/dryer to the server. Maybe send a POST request that just switches the status when the button is pressed? -->
+                      <% } else { %>
+                        <a href="#" class="btn btn-primary disabled">Use Dryer</a> <!-- This does not need to have any action bound to it because the dryer is already in use and nothing can be done about its state -->
+                      <% } %>
                       <!-- <a href="#" class="btn btn-primary">Notify me when done</a> -> is this a big ask? -->
                       <!-- TODO: add a "poke user" option to send an email to the current user of the washer/dryer! -->
                     </div>

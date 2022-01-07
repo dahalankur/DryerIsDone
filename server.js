@@ -59,7 +59,7 @@ function hashPassword(pass) {
 
 app.get('/', (req, res) => {
     if (req.session.user_info) {
-        res.render('index', { user_info: req.session.user_info, logged_in: true })
+        res.render('index', { user_info: req.session.user_info, logged_in: true, washer_available: false, dryer_available: true }) // TODO: washer and dryer status sent for testing purposes only
     } else {
         res.render('index', { logged_in: false })
     }

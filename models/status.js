@@ -10,7 +10,20 @@ const statusSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
         default: false
-    }
+    }//, 
+    // user_info: {
+    //     type: {
+    //         name: {
+    //             type: String,
+    //             required: true
+    //         },
+    //         email: {
+    //             type: String,
+    //             required: true
+    //         }
+    //     },
+    //     required: true,
+    //     default: null
+    // }
 })
-
 module.exports = mongoose.model('Status', statusSchema)

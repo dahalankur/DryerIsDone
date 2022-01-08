@@ -9,30 +9,13 @@
         <% if (logged_in) { %>
             <h1>Welcome, <%= user_info.name %>!</h1>
             <p>International house washer and dryer status: </p>
-            
-            <!-- <div class="card mx-4 my-4" style="width: 18rem;">
-                <img class="card-img-top" src="..." alt="Card image cap">  add washer/dryer photos
-                <div class="card-body">
-                  <h5 class="card-title">Washer #1</h5>
-                  <p class="card-text">Status: </p>
-                  <a href="#" class="btn btn-primary">Go somewhere</a> TODO: make this button set the washer/dryer as in/use, etc... This button should be disabled and show "in use" when washer/dryer is in use, etc.
-                </div>
-              </div>
-              <div class="card mx-4 my-4" style="width: 18rem;">
-                <img class="card-img-top" src="..." alt="Card image cap">  add washer/dryer photos
-                <div class="card-body">
-                  <h5 class="card-title">Dryer #1</h5>
-                  <p class="card-text">Status: </p>
-                  <a href="#" class="btn btn-primary">Go somewhere</a> TODO: make this button set the washer/dryer as in/use, etc...
-                </div>
-              </div> -->
-
               <div class="row my-4">
                 <div class="col-sm-6">
                   <div class="card my-4 mx-2">
                     <div class="card-body">
                       <h5 class="card-title">Washer #1</h5>
-                      <p class="card-text">Status: <% if (locals.washer_available) { %>
+                      <p class="card-text">Status: 
+                      <% if (locals.washer_available) { %>
                         <span class="badge badge-success">Available</span>
                       <% } else { %>
                         <span class="badge badge-danger">In use</span>
@@ -40,9 +23,8 @@
                       </p>
                       <% if (locals.washer_available) { %>
                         <a href="/useWasher" class="btn btn-primary">Use Washer</a>
-                        <!-- Figure out how to communicate the changed state of the washer/dryer to the server. Maybe send a POST request that just switches the status when the button is pressed? If we do this, the link should be a button that posts to /useWasher (or /useDryer) -->
                       <% } else { %>
-                        <a href="#" class="btn btn-primary disabled">Use Washer</a> <!-- This does not need to have any action bound to it because the dryer is already in use and nothing can be done about its state -->
+                        <a href="#" class="btn btn-primary disabled">Use Washer</a>
                       <% } %>
                       <!-- <a href="#" class="btn btn-primary">Notify me when done</a> -->
                       <!-- TODO: add a "poke user" option to send an email to the current user of the washer/dryer! -->
@@ -53,7 +35,8 @@
                   <div class="card my-4 mx-2">
                     <div class="card-body">
                       <h5 class="card-title">Dryer #1</h5>
-                      <p class="card-text">Status: <% if (locals.dryer_available) { %>
+                      <p class="card-text">Status: 
+                      <% if (locals.dryer_available) { %>
                         <span class="badge badge-success">Available</span>
                       <% } else { %>
                         <span class="badge badge-danger">In use</span>
@@ -61,9 +44,8 @@
                       </p>
                       <% if (locals.dryer_available) { %>
                         <a href="/useDryer" class="btn btn-primary">Use Dryer</a>
-                        <!-- Figure out how to communicate the changed state of the washer/dryer to the server. Maybe send a POST request that just switches the status when the button is pressed? -->
                       <% } else { %>
-                        <a href="#" class="btn btn-primary disabled">Use Dryer</a> <!-- This does not need to have any action bound to it because the dryer is already in use and nothing can be done about its state -->
+                        <a href="#" class="btn btn-primary disabled">Use Dryer</a>
                       <% } %>
                       <!-- <a href="#" class="btn btn-primary">Notify me when done</a> -> is this a big ask? -->
                       <!-- TODO: add a "poke user" option to send an email to the current user of the washer/dryer! -->
@@ -72,23 +54,18 @@
                 </div>
               </div>
               
-
-
               <!-- TODO: debugging code, remove later -->
               <label>TODO: For testing purpose only:</label><br />
               <a href="/debugWasher">Switch Washer Status</a><br />
               <a href="/debugDryer">Switch Dryer Status</a>
               <!-- TODO: debugging code, remove later -->
 
-           
-           
               <!--  all code for when the user is logged in goes here. All user information can be found in 
                   the user_info object -->
         <% } else { %>
-            <h1>Welcome! </h1>
+            <h1>Welcome!</h1>
             <p>This website displays current status of the washers and dryers present in the International House at Tufts University.</p>
             <p>You are not logged in. Please <a href="/login">log in</a> or <a href="/signup">sign up</a> to continue.</p>
-            <!--  all code for when the user is not logged in goes here. Ask the user to log in or sign up with the link to the respective form -->
         <% } %>
     </div>
     <%- include('./partials/bootstrap') %>

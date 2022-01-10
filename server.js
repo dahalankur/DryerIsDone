@@ -80,6 +80,7 @@ app.post('/pokeUser', (req, res) => {
         const email_body = `${sender} wants to remind you to check on your ${machine_type}!`
         const mailheader = {
             to: receiver_email,
+            from: 'DryerIsDone <dryerisdone123@gmail.com>',
             subject: email_subject,
             text: email_body
         }
@@ -234,6 +235,7 @@ app.post('/reset', async (req, res) => {
         // send an email to user with their new password
         const mailheader = {
             to: user_email,
+            from: 'DryerIsDone <dryerisdone123@gmail.com>',
             subject: 'Account Reset Request',
             text: `Your password has been reset. You can log in to your account using your new password: ${random_pass}`
         }

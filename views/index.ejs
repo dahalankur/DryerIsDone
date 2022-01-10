@@ -7,6 +7,9 @@
     <%- include('./partials/nav', { home: 'active', login: '', signup: '', logged_in: logged_in }) %> 
     <div class="container">
         <% if (logged_in) { %>
+            <span id="washer_start_time" style="display: none;"><%= washer_start_time %></span>
+            <span id="dryer_start_time" style="display: none;"><%= dryer_start_time %></span>
+            <span id="user_name" style="display: none;"><%= user_info.name %></span>
             <h1>Welcome, <%= user_info.name %>!</h1>
             <p>International house washer and dryer status: </p>
               <div class="row my-4">
@@ -21,14 +24,12 @@
                       <% } else { %>
                         <span class="badge badge-danger">In use</span><br />
                         <strong><%= washer_user_info.name %></strong> is using the washer.<br />
-                        <span id="washer_start_time" style="display: none;"><%= washer_start_time %></span>
                         Time elapsed: <span id="washer-time"></span></p> 
                         <!-- Assume that the average time for washer to get done is ~38 minutes -->
                         <a href="#" class="btn btn-primary disabled">Use Washer</a>
-                        <!-- <a href="/poke/<%= washer_user_info.name %>" class="btn btn-outline-primary">"Poke" <%= washer_user_info.name %></a> -->
+                        <button onclick="emailUser('<%= washer_user_info.email %>', 'Washer')" class="btn btn-outline-primary mx-2">Poke <%= washer_user_info.name %></button>
                       <% } %>
                       <!-- <a href="#" class="btn btn-primary">Notify me when done</a> -->
-                      <!-- TODO: add a "poke user" option to send an email to the current user of the washer/dryer! -->
                     </div>
                   </div>
                 </div>
@@ -43,14 +44,12 @@
                       <% } else { %>
                         <span class="badge badge-danger">In use</span><br />
                         <strong><%= dryer_user_info.name %></strong> is using the dryer.<br />
-                        <span id="dryer_start_time" style="display: none;"><%= dryer_start_time %></span>
                         Time elapsed: <span id="dryer-time"></span></p>
                         <!-- Assume that the average time for dryer to get done is ~75 minutes -->
                         <a href="#" class="btn btn-primary disabled">Use Dryer</a>
-                        <!-- <a href="/poke/<%= dryer_user_info.name %>" class="btn btn-outline-primary">"Poke" <%= dryer_user_info.name %></a> -->
+                        <button onclick="emailUser('<%= dryer_user_info.email %>', 'Dryer')" class="btn btn-outline-primary mx-2">Poke <%= dryer_user_info.name %></button>
                       <% } %>
                       <!-- <a href="#" class="btn btn-primary">Notify me when done</a> -> is this a big ask? -->
-                      <!-- TODO: add a "poke user" option to send an email to the current user of the washer/dryer! -->
                     </div>
                   </div>
                 </div>
@@ -71,13 +70,36 @@
         <% } %>
     </div>
     
+    <!-- TODO: figure out when to stop the washers and dryers....! -->
+
     <script>
+
+    function emailUser(email, machine) {
+        const my_name = document.getElementById('user_name').innerHTML
+        // send a POST request to /pokeUser using fetch API
+        fetch("/pokeUser", {
+            method: "POST",
+            headers: {
+                "Content-type": "application/x-www-form-urlencoded" 
+            },
+            body: new URLSearchParams({
+                my_name: my_name,
+                email: email,
+                machine: machine
+            })
+        })
+            .then(console.log("sent!"))
+            .catch(err => console.error(err))
+    }
+
     const updateTimer = setInterval(() => {
         const washer_time = getElapsedTimeObject('washer_start_time')
         const dryer_time = getElapsedTimeObject('dryer_start_time')
 
-        document.getElementById('washer-time').innerHTML =  washer_time.hours + "h " + washer_time.minutes + "m " + washer_time.seconds + "s ";
-        document.getElementById('dryer-time').innerHTML =  dryer_time.hours + "h " + dryer_time.minutes + "m " + dryer_time.seconds + "s ";
+        document.getElementById('washer-time').innerHTML =  
+            washer_time.hours + "h " + washer_time.minutes + "m " + washer_time.seconds + "s ";
+        document.getElementById('dryer-time').innerHTML =  
+            dryer_time.hours + "h " + dryer_time.minutes + "m " + dryer_time.seconds + "s ";
     }, 1000);
 
     function getElapsedTimeObject(id) {
@@ -94,7 +116,7 @@
         }
     }
     </script>
-<!-- TODO: figure out when to stop the washers and dryers....! -->
+
     <%- include('./partials/bootstrap') %>
 </body>
 </html>

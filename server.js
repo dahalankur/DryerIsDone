@@ -71,6 +71,20 @@ app.get('/debugDryer', async (req, res) => {
 
 //                       //
 
+app.post('/pokeUser', (req, res) => {
+    const sender = req.body.my_name
+    const receiver_email = req.body.email
+    const machine_type = req.body.machine
+    const email_subject = `${sender} has poked you!`
+    const email_body = `${sender} wants to remind you to check on your ${machine_type}! Thank you!`
+    const mailheader = {
+        to: receiver_email,
+        subject: email_subject,
+        text: email_body
+    }
+    sendmail(mailheader)
+    res.redirect('/')
+})
 
 app.get('/useWasher', async (req, res) => {
     if (req.session.user_info) {

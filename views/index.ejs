@@ -21,7 +21,8 @@
                       <% } else { %>
                         <span class="badge badge-danger">In use</span><br />
                         <strong><%= washer_user_info.name %></strong> is using the washer.<br />
-                        Time elapsed: ~<%= washer_time_elapsed %> minutes</p> 
+                        <span id="washer_start_time" style="display: none;"><%= washer_start_time %></span>
+                        Time elapsed: <span id="washer-time"></span></p> 
                         <!-- Assuming the average time for washer to get done is ~38 minutes -->
                         <a href="#" class="btn btn-primary disabled">Use Washer</a>
                       <% } %>
@@ -41,7 +42,8 @@
                       <% } else { %>
                         <span class="badge badge-danger">In use</span><br />
                         <strong><%= dryer_user_info.name %></strong> is using the dryer.<br />
-                        Time elapsed: ~<%= dryer_time_elapsed %> minutes</p>
+                        <span id="dryer_start_time" style="display: none;"><%= dryer_start_time %></span>
+                        Time elapsed: <span id="dryer-time"></span></p>
                         <!-- Assuming the average time for dryer to get done is ~75 minutes -->
                         <a href="#" class="btn btn-primary disabled">Use Dryer</a>
                       <% } %> <!-- TODO: add info about the user who is using the dryer, and so on... -->
@@ -66,6 +68,29 @@
             <p>You are not logged in. Please <a href="/login">log in</a> or <a href="/signup">sign up</a> to continue.</p>
         <% } %>
     </div>
+    <script>
+    const updateTimer = setInterval(() => {
+        const washer_start_time = document.getElementById('washer_start_time')
+        const washer_elapsed_time = Date.now() - new Date(washer_start_time.innerHTML)
+        const washer_time = deconstructTime(washer_elapsed_time)
+
+        const dryer_start_time = document.getElementById('dryer_start_time')
+        const dryer_elapsed_time = Date.now() - new Date(dryer_start_time.innerHTML)
+        const dryer_time = deconstructTime(dryer_elapsed_time)
+
+        document.getElementById('washer-time').innerHTML =  washer_time.hours + "h " + washer_time.minutes + "m " + washer_time.seconds + "s ";
+        document.getElementById('dryer-time').innerHTML =  dryer_time.hours + "h " + dryer_time.minutes + "m " + dryer_time.seconds + "s ";
+    }, 1000);
+
+    function deconstructTime(elapsed_time) {
+        return {
+            hours: Math.floor((elapsed_time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+            minutes: Math.floor((elapsed_time % (1000 * 60 * 60)) / (1000 * 60)),
+            seconds: Math.floor((elapsed_time % (1000 * 60)) / 1000)
+        }
+    }
+    </script>
+
     <%- include('./partials/bootstrap') %>
 </body>
 </html>

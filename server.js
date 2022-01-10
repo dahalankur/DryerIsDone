@@ -10,7 +10,7 @@ const session = require('express-session')
 const MongoDBStore = require('connect-mongodb-session')(session)
 
 const TWO_WEEKS = 14 * 24 * 60 * 60 * 1000 // milliseconds
-const MILLISECONDS_IN_MINUTE = 60000
+// const MILLISECONDS_IN_MINUTE = 60000
 const SALTROUNDS = 10
 const PORT = process.env.PORT || 8000
 const app = express()
@@ -121,8 +121,8 @@ app.get('/', async (req, res) => {
                 dryer_available: status.dryer_available,
                 washer_user_info: status.washer_user_info,
                 dryer_user_info: status.dryer_user_info,
-                washer_time_elapsed: Math.floor((Date.now() - status.washer_start_time) / MILLISECONDS_IN_MINUTE),
-                dryer_time_elapsed: Math.floor((Date.now() - status.dryer_start_time) / MILLISECONDS_IN_MINUTE)
+                washer_start_time: status.washer_start_time,
+                dryer_start_time: status.dryer_start_time
             })
     } else {
         res.render('index', { logged_in: false })

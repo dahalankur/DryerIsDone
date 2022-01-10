@@ -27,7 +27,7 @@
                         Time elapsed: <span id="washer-time"></span></p> 
                         <!-- Assume that the average time for washer to get done is ~38 minutes -->
                         <a href="#" class="btn btn-primary disabled">Use Washer</a>
-                        <button onclick="emailUser('<%= washer_user_info.email %>', 'Washer')" class="btn btn-outline-primary mx-2">Poke <%= washer_user_info.name %></button>
+                        <button onclick="emailUser('<%= washer_user_info.email %>', 'Washer')" class="btn btn-outline-primary mx-2" id="Washer">Poke <%= washer_user_info.name %></button>
                       <% } %>
                       <!-- <a href="#" class="btn btn-primary">Notify me when done</a> -->
                     </div>
@@ -47,7 +47,7 @@
                         Time elapsed: <span id="dryer-time"></span></p>
                         <!-- Assume that the average time for dryer to get done is ~75 minutes -->
                         <a href="#" class="btn btn-primary disabled">Use Dryer</a>
-                        <button onclick="emailUser('<%= dryer_user_info.email %>', 'Dryer')" class="btn btn-outline-primary mx-2">Poke <%= dryer_user_info.name %></button>
+                        <button onclick="emailUser('<%= dryer_user_info.email %>', 'Dryer')" class="btn btn-outline-primary mx-2" id="Dryer">Poke <%= dryer_user_info.name %></button>
                       <% } %>
                       <!-- <a href="#" class="btn btn-primary">Notify me when done</a> -> is this a big ask? -->
                     </div>
@@ -88,7 +88,11 @@
                 machine: machine
             })
         })
-            .then(console.log("sent!")) // TODO: after sending the Poke, flash the message that the user has been notified
+            .then(() => {
+                const button = document.getElementById(machine)
+                button.innerHTML = 'Poked!'
+                button.classList.add('disabled')
+            })
             .catch(err => console.error(err))
     }
 

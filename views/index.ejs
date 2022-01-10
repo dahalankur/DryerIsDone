@@ -99,11 +99,14 @@
     const updateTimer = setInterval(() => {
         const washer_time = getElapsedTimeObject('washer_start_time')
         const dryer_time = getElapsedTimeObject('dryer_start_time')
-
-        document.getElementById('washer-time').innerHTML =  
-            washer_time.hours + "h " + washer_time.minutes + "m " + washer_time.seconds + "s ";
-        document.getElementById('dryer-time').innerHTML =  
-            dryer_time.hours + "h " + dryer_time.minutes + "m " + dryer_time.seconds + "s ";
+        const washer_time_placeholder = document.getElementById('washer-time')
+        const dryer_time_placeholder = document.getElementById('dryer-time')
+        if (washer_time_placeholder) 
+            washer_time_placeholder.innerHTML =  
+                washer_time.hours + "h " + washer_time.minutes + "m " + washer_time.seconds + "s ";
+        if (dryer_time_placeholder)
+            dryer_time_placeholder.innerHTML =  
+                dryer_time.hours + "h " + dryer_time.minutes + "m " + dryer_time.seconds + "s ";
     }, 1000);
 
     function getElapsedTimeObject(id) {

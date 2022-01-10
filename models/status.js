@@ -10,20 +10,40 @@ const statusSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
         default: false
-    }//, 
-    // user_info: {
-    //     type: {
-    //         name: {
-    //             type: String,
-    //             required: true
-    //         },
-    //         email: {
-    //             type: String,
-    //             required: true
-    //         }
-    //     },
-    //     required: true,
-    //     default: null
-    // }
+    }, 
+    washer_user_info: {
+        name: {
+            type: String,
+            default: "-",
+            required: true
+        },
+        email: {
+            type: String,
+            default: "-",
+            required: true
+        }
+    },
+    dryer_user_info: {
+        name: {
+            type: String,
+            default: "-",
+            required: true
+        },
+        email: {
+            type: String,
+            default: "-",
+            required: true
+        }
+    },
+    washer_start_time: {
+        type: Date,
+        required: true,
+        default: Date.now()
+    },
+    dryer_start_time: {
+        type: Date,
+        required: true,
+        default: Date.now()
+    }
 })
 module.exports = mongoose.model('Status', statusSchema)

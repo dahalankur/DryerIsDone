@@ -16,14 +16,13 @@
                       <h5 class="card-title">Washer #1</h5>
                       <p class="card-text">Status: 
                       <% if (locals.washer_available) { %>
-                        <span class="badge badge-success">Available</span>
+                        <span class="badge badge-success">Available</span></p>
+                        <a href="/useWasher" class="btn btn-primary">Use Washer</a>     
                       <% } else { %>
-                        <span class="badge badge-danger">In use</span>
-                      <% } %>
-                      </p>
-                      <% if (locals.washer_available) { %>
-                        <a href="/useWasher" class="btn btn-primary">Use Washer</a>
-                      <% } else { %>
+                        <span class="badge badge-danger">In use</span><br />
+                        <strong><%= washer_user_info.name %></strong> is using the washer.<br />
+                        Time elapsed: ~<%= washer_time_elapsed %> minutes</p> 
+                        <!-- Assuming the average time for washer to get done is ~38 minutes -->
                         <a href="#" class="btn btn-primary disabled">Use Washer</a>
                       <% } %>
                       <!-- <a href="#" class="btn btn-primary">Notify me when done</a> -->
@@ -37,16 +36,15 @@
                       <h5 class="card-title">Dryer #1</h5>
                       <p class="card-text">Status: 
                       <% if (locals.dryer_available) { %>
-                        <span class="badge badge-success">Available</span>
-                      <% } else { %>
-                        <span class="badge badge-danger">In use</span>
-                      <% } %> <!-- TODO: add info about the user who is using the dryer, and so on... -->
-                      </p>
-                      <% if (locals.dryer_available) { %>
+                        <span class="badge badge-success">Available</span></p>
                         <a href="/useDryer" class="btn btn-primary">Use Dryer</a>
                       <% } else { %>
+                        <span class="badge badge-danger">In use</span><br />
+                        <strong><%= dryer_user_info.name %></strong> is using the dryer.<br />
+                        Time elapsed: ~<%= dryer_time_elapsed %> minutes</p>
+                        <!-- Assuming the average time for dryer to get done is ~75 minutes -->
                         <a href="#" class="btn btn-primary disabled">Use Dryer</a>
-                      <% } %>
+                      <% } %> <!-- TODO: add info about the user who is using the dryer, and so on... -->
                       <!-- <a href="#" class="btn btn-primary">Notify me when done</a> -> is this a big ask? -->
                       <!-- TODO: add a "poke user" option to send an email to the current user of the washer/dryer! -->
                     </div>

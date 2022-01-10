@@ -10,6 +10,7 @@ const session = require('express-session')
 const MongoDBStore = require('connect-mongodb-session')(session)
 
 const TWO_WEEKS = 14 * 24 * 60 * 60 * 1000 // milliseconds
+const MILLISECONDS_IN_MINUTE = 60000
 const SALTROUNDS = 10
 const PORT = process.env.PORT || 8000
 const app = express()
@@ -79,6 +80,9 @@ app.get('/useWasher', async (req, res) => {
             console.error("not allowed!") // TODO: flash message that dryer is already in use by someone else
             return res.redirect('/') 
         }
+        // the user who pressed the button is now set as the current user of the washer
+        curr_status.washer_user_info = { name: req.session.user_info.name, email: req.session.user_info.email }
+        curr_status.washer_start_time = Date.now()
         curr_status.washer_available = false
         await curr_status.save()
         res.redirect('/')
@@ -95,6 +99,9 @@ app.get('/useDryer', async (req, res) => {
             console.error("not allowed!") // TODO: flash message that dryer is already in use by someone else
             return res.redirect('/') 
         } 
+        // the user who pressed the button is now set as the current user of the dryer
+        curr_status.dryer_user_info = { name: req.session.user_info.name, email: req.session.user_info.email }
+        curr_status.dryer_start_time = Date.now()
         curr_status.dryer_available = false
         await curr_status.save()
         res.redirect('/')
@@ -106,7 +113,17 @@ app.get('/useDryer', async (req, res) => {
 app.get('/', async (req, res) => {
     if (req.session.user_info) {
         const status = await getStatusModel()
-        res.render('index', { user_info: req.session.user_info, logged_in: true, washer_available: status.washer_available, dryer_available: status.dryer_available })
+        res.render('index', 
+            { 
+                user_info: req.session.user_info, 
+                logged_in: true, 
+                washer_available: status.washer_available, 
+                dryer_available: status.dryer_available,
+                washer_user_info: status.washer_user_info,
+                dryer_user_info: status.dryer_user_info,
+                washer_time_elapsed: Math.floor((Date.now() - status.washer_start_time) / MILLISECONDS_IN_MINUTE),
+                dryer_time_elapsed: Math.floor((Date.now() - status.dryer_start_time) / MILLISECONDS_IN_MINUTE)
+            })
     } else {
         res.render('index', { logged_in: false })
     }

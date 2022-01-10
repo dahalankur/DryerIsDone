@@ -23,8 +23,9 @@
                         <strong><%= washer_user_info.name %></strong> is using the washer.<br />
                         <span id="washer_start_time" style="display: none;"><%= washer_start_time %></span>
                         Time elapsed: <span id="washer-time"></span></p> 
-                        <!-- Assuming the average time for washer to get done is ~38 minutes -->
+                        <!-- Assume that the average time for washer to get done is ~38 minutes -->
                         <a href="#" class="btn btn-primary disabled">Use Washer</a>
+                        <!-- <a href="/poke/<%= washer_user_info.name %>" class="btn btn-outline-primary">"Poke" <%= washer_user_info.name %></a> -->
                       <% } %>
                       <!-- <a href="#" class="btn btn-primary">Notify me when done</a> -->
                       <!-- TODO: add a "poke user" option to send an email to the current user of the washer/dryer! -->
@@ -44,9 +45,10 @@
                         <strong><%= dryer_user_info.name %></strong> is using the dryer.<br />
                         <span id="dryer_start_time" style="display: none;"><%= dryer_start_time %></span>
                         Time elapsed: <span id="dryer-time"></span></p>
-                        <!-- Assuming the average time for dryer to get done is ~75 minutes -->
+                        <!-- Assume that the average time for dryer to get done is ~75 minutes -->
                         <a href="#" class="btn btn-primary disabled">Use Dryer</a>
-                      <% } %> <!-- TODO: add info about the user who is using the dryer, and so on... -->
+                        <!-- <a href="/poke/<%= dryer_user_info.name %>" class="btn btn-outline-primary">"Poke" <%= dryer_user_info.name %></a> -->
+                      <% } %>
                       <!-- <a href="#" class="btn btn-primary">Notify me when done</a> -> is this a big ask? -->
                       <!-- TODO: add a "poke user" option to send an email to the current user of the washer/dryer! -->
                     </div>
@@ -68,19 +70,21 @@
             <p>You are not logged in. Please <a href="/login">log in</a> or <a href="/signup">sign up</a> to continue.</p>
         <% } %>
     </div>
+    
     <script>
     const updateTimer = setInterval(() => {
-        const washer_start_time = document.getElementById('washer_start_time')
-        const washer_elapsed_time = Date.now() - new Date(washer_start_time.innerHTML)
-        const washer_time = deconstructTime(washer_elapsed_time)
-
-        const dryer_start_time = document.getElementById('dryer_start_time')
-        const dryer_elapsed_time = Date.now() - new Date(dryer_start_time.innerHTML)
-        const dryer_time = deconstructTime(dryer_elapsed_time)
+        const washer_time = getElapsedTimeObject('washer_start_time')
+        const dryer_time = getElapsedTimeObject('dryer_start_time')
 
         document.getElementById('washer-time').innerHTML =  washer_time.hours + "h " + washer_time.minutes + "m " + washer_time.seconds + "s ";
         document.getElementById('dryer-time').innerHTML =  dryer_time.hours + "h " + dryer_time.minutes + "m " + dryer_time.seconds + "s ";
     }, 1000);
+
+    function getElapsedTimeObject(id) {
+        const div = document.getElementById(id)
+        const elapsed_time = Date.now() - new Date(div.innerHTML)
+        return deconstructTime(elapsed_time)
+    }
 
     function deconstructTime(elapsed_time) {
         return {
@@ -90,7 +94,7 @@
         }
     }
     </script>
-
+<!-- TODO: figure out when to stop the washers and dryers....! -->
     <%- include('./partials/bootstrap') %>
 </body>
 </html>

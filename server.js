@@ -95,6 +95,7 @@ app.get('/useWasher', async (req, res) => {
         curr_status.washer_start_time = Date.now()
         curr_status.washer_available = false
         await curr_status.save()
+        // TODO: trigger something that starts a 60 min countdown to inform the user that their washer is probably done
         res.redirect('/')
     } else {
         res.render('index', { logged_in: false })
@@ -114,6 +115,7 @@ app.get('/useDryer', async (req, res) => {
         curr_status.dryer_start_time = Date.now()
         curr_status.dryer_available = false
         await curr_status.save()
+        // TODO: trigger something that starts a 90 min countdown to inform the user that their dryer is probably done
         res.redirect('/')
     } else {
         res.render('index', { logged_in: false })

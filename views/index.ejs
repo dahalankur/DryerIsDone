@@ -100,12 +100,36 @@
         const dryer_time = getElapsedTimeObject('dryer_start_time')
         const washer_time_placeholder = document.getElementById('washer-time')
         const dryer_time_placeholder = document.getElementById('dryer-time')
-        if (washer_time_placeholder) 
+        if (washer_time_placeholder) {
             washer_time_placeholder.innerHTML =  
                 washer_time.hours + "h " + washer_time.minutes + "m " + washer_time.seconds + "s ";
-        if (dryer_time_placeholder)
+            // if the washer is in use for more than 60 minutes, switch its status
+            let washer_minutes_used = washer_time.hours * 60 + washer_time.minutes
+            if (washer_minutes_used > 60) {
+              fetch("/debugWasher", 
+                {
+                  method: "GET"
+                })
+                  .then(() => { 
+                    window.location = '/' })
+                  .catch(err => console.error(err))
+            }
+        }
+        if (dryer_time_placeholder) {
             dryer_time_placeholder.innerHTML =  
                 dryer_time.hours + "h " + dryer_time.minutes + "m " + dryer_time.seconds + "s ";
+            // if the dryer is in use for more than 90 minutes, switch its status
+            let dryer_minutes_used = dryer_time.hours * 60 + dryer_time.minutes
+            if (dryer_minutes_used > 90) {
+              fetch("/debugDryer", 
+                {
+                  method: "GET"
+                })
+                  .then(() => { 
+                    window.location = '/' })
+                  .catch(err => console.error(err))
+            }
+        }
     }, 1000);
 
     function getElapsedTimeObject(id) {

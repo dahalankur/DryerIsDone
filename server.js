@@ -251,7 +251,7 @@ app.post('/changepass', async (req, res) => {
                 await user_info.save()
                 res.redirect('/')
             } else {
-                res.render('changepassword', { msg: "The password you entered is incorrect. Try again or reset your password." })
+                res.render('changepassword', { msg: "The password you entered is incorrect. Try again or reset your password.", user_info: req.session.user_info })
             }
         } else {
             res.render('signup', { msg: "Account does not exist. Please create a new account." })

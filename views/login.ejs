@@ -10,6 +10,9 @@
             <label for="email" class="sr-only">Email: </label><input required placeholder="Email" type="email" name="email" value="<%= locals.email %>"><br />
             <label for="password" class="sr-only">Password: </label><input placeholder="Password" type="password" name="password" required>
             <button type="submit" class="btn btn-outline-success mx-2 btn-sm">Log In</button>
+            <% if (locals.msg) { %>
+                <span class="message"><%= locals.msg %></span>
+            <% } %>
         </form>
         <a href="/signup">Need an account? Sign up.</a><br />
         <a href="/reset">Forgot Password?</a>

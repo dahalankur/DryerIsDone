@@ -10,7 +10,6 @@ const session = require('express-session')
 const MongoDBStore = require('connect-mongodb-session')(session)
 
 const TWO_WEEKS = 14 * 24 * 60 * 60 * 1000 // milliseconds
-// const MILLISECONDS_IN_MINUTE = 60000
 const SALTROUNDS = 10
 const PORT = process.env.PORT || 8000
 const app = express()
@@ -32,14 +31,6 @@ mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Connected to database.'))
     .catch(err => console.error(err))
 
-// snippet for sending email:
-// const mailheader = {
-//     to: 'email@gmail.com', // replace with the user's email
-//     subject: 'Ding dong! Your dryer/washer is done!',
-//     text: 'It works!'
-// }
-// sendmail(mailheader)
-
 
 app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: true }))
@@ -53,7 +44,7 @@ app.use(session({
 }))
 
 
-// TODO: debug mode only //
+// TODO: debug mode only -> this is unsafe as any user can simply send a GET request to change the dryer/washer status //
 
 app.get('/debugWasher', async (req, res) => {
     const status = await getStatusModel()
@@ -69,7 +60,7 @@ app.get('/debugDryer', async (req, res) => {
     res.redirect('/')
 })
 
-//                       //
+//  ---------------------------------------  //
 
 app.post('/pokeUser', (req, res) => {
     if (req.session.user_info) {
@@ -183,12 +174,11 @@ app.get('/logout', (req, res) => {
     res.redirect('/')
 })
 
-// TODO: remember to RETURN from res.redirect or wrap everything else in an else block to prevent the following code blocks from running
 app.post('/signup', async (req, res) => {
     // check if user has already signed up with that email
     const user_info = req.user_info
     if (user_info) {
-        return res.redirect('/login') // TODO: 'flash' message that user exists! Log in
+        return res.render('login', { msg: "User exists with that email, please log in instead.", email: user_info.email })
     }
     if (!req.session.user_info) {
         const user_name = req.body.name
@@ -205,7 +195,7 @@ app.post('/signup', async (req, res) => {
 app.post('/login', async (req, res) => {
     const user_info = req.user_info
     if (!user_info) {
-        return res.redirect('/signup') // TODO: add a 'flash' system for showing messages (like Flask) -> ask user to sign up
+        return res.render('signup', { msg: "User does not exist, please create a new account." })
     }
     // check if user is already logged in
     if (req.session.user_info) {
@@ -218,7 +208,7 @@ app.post('/login', async (req, res) => {
             req.session.user_info = user_info
             res.redirect('/')
         } else {
-            res.render('login', { email: user_info.email }) // pre-fill the form with their email
+            res.render('login', { email: user_info.email, msg: "Incorrect password." }) // pre-fill the form with their email
         }
     }
 })
@@ -240,16 +230,16 @@ app.post('/reset', async (req, res) => {
             text: `Your password has been reset. You can log in to your account using your new password: ${random_pass}`
         }
         sendmail(mailheader)
-        res.redirect('/login') // TODO: flash -> password has been reset, use that to log in
+        res.render('login', { msg: "Password has been reset. Please check your email for your new password." })
     } else {
-        res.redirect('/signup') // TODO: flash -> account does not exist
+        res.render('signup', { msg: "Account with that email address does not exist, please create a new account." })
     }
 })
 
 app.post('/changepass', async (req, res) => {
     const user_info = req.user_info
     if (!req.session.user_info) {
-        res.redirect('/') // TODO: user has to log in first!
+        res.redirect('/')
     } else {
         if (user_info) {
             const old_pass = req.body.password
@@ -261,10 +251,10 @@ app.post('/changepass', async (req, res) => {
                 await user_info.save()
                 res.redirect('/')
             } else {
-                res.redirect('/changepass') // TODO: flash -> wrong password entered
+                res.render('changepassword', { msg: "The password you entered is incorrect. Try again or reset your password." })
             }
         } else {
-            res.redirect('/signup') // TODO: flash -> your account does not exist, you have to sign up
+            res.render('signup', { msg: "Account does not exist. Please create a new account." })
         }
     }
 })

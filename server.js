@@ -87,7 +87,7 @@ app.get('/useWasher', async (req, res) => {
         const curr_status = await getStatusModel()
         // handle user-induced "race condition"
         if (!curr_status.washer_available) {
-            console.error("not allowed!") // TODO: flash message that dryer is already in use by someone else
+            console.error("not allowed!")
             return res.redirect('/') 
         }
         // the user who pressed the button is now set as the current user of the washer
@@ -106,7 +106,7 @@ app.get('/useDryer', async (req, res) => {
         const curr_status = await getStatusModel()
         // handle user-induced "race condition"
         if (!curr_status.dryer_available) { 
-            console.error("not allowed!") // TODO: flash message that dryer is already in use by someone else
+            console.error("not allowed!")
             return res.redirect('/') 
         } 
         // the user who pressed the button is now set as the current user of the dryer

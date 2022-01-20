@@ -25,9 +25,13 @@
                         <span class="badge badge-danger">In use</span><br />
                         <strong><%= washer_user_info.name %></strong> is using the washer.<br />
                         Time elapsed: <span id="washer-time"></span></p> 
-                        <!-- Assume that the average time for washer to get done is ~38 minutes -->
-                        <a href="#" class="btn btn-primary disabled">Use Washer</a>
-                        <button onclick="emailUser('<%= washer_user_info.email %>', 'Washer')" class="btn btn-outline-primary mx-2" id="Washer">Poke <%= washer_user_info.name %></button>
+                        <!-- TODO: Assume that the average time for washer to get done is ~38 minutes -->
+                        <% if (washer_user_info.email == user_info.email) { %>
+                          <a href="/debugWasher" class="btn btn-secondary">Stop Using Washer</a>
+                        <% } else { %>
+                          <a href="#" class="btn btn-primary disabled">Use Washer</a>
+                          <button onclick="emailUser('<%= washer_user_info.email %>', 'Washer')" class="btn btn-outline-primary mx-2" id="Washer">Poke <%= washer_user_info.name %></button>
+                        <% } %>
                       <% } %>
                       <!-- <a href="#" class="btn btn-primary">Notify me when done</a> -->
                     </div>
@@ -45,24 +49,19 @@
                         <span class="badge badge-danger">In use</span><br />
                         <strong><%= dryer_user_info.name %></strong> is using the dryer.<br />
                         Time elapsed: <span id="dryer-time"></span></p>
-                        <!-- Assume that the average time for dryer to get done is ~75 minutes -->
-                        <a href="#" class="btn btn-primary disabled">Use Dryer</a>
-                        <button onclick="emailUser('<%= dryer_user_info.email %>', 'Dryer')" class="btn btn-outline-primary mx-2" id="Dryer">Poke <%= dryer_user_info.name %></button>
+                        <!-- TODO: Assume that the average time for dryer to get done is ~75 minutes -->
+                        <% if (dryer_user_info.email == user_info.email) { %>
+                          <a href="/debugDryer" class="btn btn-secondary">Stop Using Dryer</a>
+                        <% } else { %>
+                          <a href="#" class="btn btn-primary disabled">Use Dryer</a>
+                          <button onclick="emailUser('<%= dryer_user_info.email %>', 'Dryer')" class="btn btn-outline-primary mx-2" id="Dryer">Poke <%= dryer_user_info.name %></button>
+                        <% } %>
                       <% } %>
                       <!-- <a href="#" class="btn btn-primary">Notify me when done</a> -> is this a big ask? -->
                     </div>
                   </div>
                 </div>
               </div>
-              
-              <!-- TODO: debugging code, remove later -->
-              <label>TODO: For testing purpose only:</label><br />
-              <a href="/debugWasher">Switch Washer Status</a><br />
-              <a href="/debugDryer">Switch Dryer Status</a>
-              <!-- TODO: debugging code, remove later -->
-
-              <!--  all code for when the user is logged in goes here. All user information can be found in 
-                  the user_info object -->
         <% } else { %>
             <h1>Welcome!</h1>
             <p>This website displays current status of the washers and dryers present in the International House at Tufts University.</p>

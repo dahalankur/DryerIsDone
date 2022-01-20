@@ -27,7 +27,7 @@
                         Time elapsed: <span id="washer-time"></span></p> 
                         <!-- TODO: Assume that the average time for washer to get done is ~38 minutes -->
                         <% if (washer_user_info.email == user_info.email) { %>
-                          <a href="/debugWasher" class="btn btn-secondary">Stop Using Washer</a>
+                          <a href="/debugWasher" class="btn btn-primary">Stop Using Washer</a>
                         <% } else { %>
                           <a href="#" class="btn btn-primary disabled">Use Washer</a>
                           <button onclick="emailUser('<%= washer_user_info.email %>', 'Washer')" class="btn btn-outline-primary mx-2" id="Washer">Poke <%= washer_user_info.name %></button>
@@ -51,7 +51,7 @@
                         Time elapsed: <span id="dryer-time"></span></p>
                         <!-- TODO: Assume that the average time for dryer to get done is ~75 minutes -->
                         <% if (dryer_user_info.email == user_info.email) { %>
-                          <a href="/debugDryer" class="btn btn-secondary">Stop Using Dryer</a>
+                          <a href="/debugDryer" class="btn btn-primary">Stop Using Dryer</a>
                         <% } else { %>
                           <a href="#" class="btn btn-primary disabled">Use Dryer</a>
                           <button onclick="emailUser('<%= dryer_user_info.email %>', 'Dryer')" class="btn btn-outline-primary mx-2" id="Dryer">Poke <%= dryer_user_info.name %></button>

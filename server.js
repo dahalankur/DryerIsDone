@@ -82,6 +82,24 @@ app.post('/pokeUser', (req, res) => {
     }
 })
 
+app.post('/notifyUser', (req, res) => {
+    if (req.session.user_info) {
+        const email = req.body.email
+        const machine = req.body.machine
+        const email_subject = `${machine} Status Changed`
+        const email_body = `Your ${machine} had been running for quite some time, so we have decided to make it available for other users. If this is an error, please go to the website and re-use the ${machine}.`
+        const mailheader = {
+            to: email,
+            from: 'DryerIsDone <dryerisdone123@gmail.com>',
+            subject: email_subject,
+            text: email_body
+        }
+        sendmail(mailheader)
+    } else {
+        res.render('index', { logged_in: false })
+    }
+})
+
 app.get('/useWasher', async (req, res) => {
     if (req.session.user_info) {
         const curr_status = await getStatusModel()

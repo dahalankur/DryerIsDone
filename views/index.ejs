@@ -24,8 +24,8 @@
                       <% } else { %>
                         <span class="badge badge-danger">In use</span><br />
                         <strong><%= washer_user_info.name %></strong> is using the washer.<br />
-                        Time elapsed: <span id="washer-time"></span></p> 
-                        <!-- TODO: Assume that the average time for washer to get done is ~38 minutes -->
+                        Time elapsed: <span id="washer-time"></span></p>
+                        <span id="washer_user_email" style="display: none;"><%= washer_user_info.email %></span>
                         <% if (washer_user_info.email == user_info.email) { %>
                           <a href="/debugWasher" class="btn btn-primary">Stop Using Washer</a>
                         <% } else { %>
@@ -33,7 +33,6 @@
                           <button onclick="emailUser('<%= washer_user_info.email %>', 'Washer')" class="btn btn-outline-primary mx-2" id="Washer">Poke <%= washer_user_info.name %></button>
                         <% } %>
                       <% } %>
-                      <!-- <a href="#" class="btn btn-primary">Notify me when done</a> -->
                     </div>
                   </div>
                 </div>
@@ -49,7 +48,7 @@
                         <span class="badge badge-danger">In use</span><br />
                         <strong><%= dryer_user_info.name %></strong> is using the dryer.<br />
                         Time elapsed: <span id="dryer-time"></span></p>
-                        <!-- TODO: Assume that the average time for dryer to get done is ~75 minutes -->
+                        <span id="dryer_user_email" style="display: none;"><%= dryer_user_info.email %></span>
                         <% if (dryer_user_info.email == user_info.email) { %>
                           <a href="/debugDryer" class="btn btn-primary">Stop Using Dryer</a>
                         <% } else { %>
@@ -57,7 +56,6 @@
                           <button onclick="emailUser('<%= dryer_user_info.email %>', 'Dryer')" class="btn btn-outline-primary mx-2" id="Dryer">Poke <%= dryer_user_info.name %></button>
                         <% } %>
                       <% } %>
-                      <!-- <a href="#" class="btn btn-primary">Notify me when done</a> -> is this a big ask? -->
                     </div>
                   </div>
                 </div>
@@ -68,11 +66,8 @@
             <p>You are not logged in. Please <a href="/login">log in</a> or <a href="/signup">sign up</a> to continue.</p>
         <% } %>
     </div>
-    
-    <!-- TODO: figure out when to stop the washers and dryers....! -->
 
     <script>
-
     function emailUser(email, machine) {
         const my_name = document.getElementById('user_name').innerHTML
         // send a POST request to /pokeUser using fetch API
@@ -110,8 +105,23 @@
                 {
                   method: "GET"
                 })
-                  .then(() => { 
-                    window.location = '/' })
+                  .then(() => {
+                    // send a POST request to /notifyUser using fetch API to notify the user
+                    const email = document.getElementById('washer_user_email').innerHTML
+                    fetch("/notifyUser", {
+                        method: "POST",
+                        headers: {
+                            "Content-type": "application/x-www-form-urlencoded" 
+                        },
+                        body: new URLSearchParams({
+                            email: email,
+                            machine: "Washer"
+                        })
+                    })
+                        .then(console.log("Email sent to the user!"))
+                        .catch(err => console.error(err))
+                    window.location = '/' // reload the page
+                  })
                   .catch(err => console.error(err))
             }
         }
@@ -125,8 +135,23 @@
                 {
                   method: "GET"
                 })
-                  .then(() => { 
-                    window.location = '/' })
+                  .then(() => {
+                    // send a POST request to /notifyUser using fetch API to notify the user
+                    const email = document.getElementById('dryer_user_email').innerHTML
+                    fetch("/notifyUser", {
+                        method: "POST",
+                        headers: {
+                            "Content-type": "application/x-www-form-urlencoded" 
+                        },
+                        body: new URLSearchParams({
+                            email: email,
+                            machine: "Dryer"
+                        })
+                    })
+                        .then(console.log("Email sent to the user!"))
+                        .catch(err => console.error(err))
+                    window.location = '/' // reload the page
+                  })
                   .catch(err => console.error(err))
             }
         }
